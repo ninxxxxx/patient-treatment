@@ -6,6 +6,8 @@ import X2JS from 'x2js';
 
 import { DeviceConnectionPage } from '../device-connection/device-connection';
 
+
+
 /*
   Generated class for the Login page.
 
@@ -82,7 +84,6 @@ export class LoginPage {
             message: 'Please enter your email and password.',
             duration: 2000,
             position: "bottom"});
-
             toast.present(toast);
             this.username = null;
             this.password = null;

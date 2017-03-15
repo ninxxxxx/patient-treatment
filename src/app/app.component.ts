@@ -4,8 +4,7 @@ import { StatusBar, Splashscreen } from 'ionic-native';
 import { Storage } from '@ionic/storage';
 
 import { LoginPage } from '../pages/login/login';
-import { DeviceConnectionPage } from '../pages/device-connection/device-connection';
-
+import { DeviceConnectionPage } from '../pages/device-connection/device-connection'; 
 @Component({
   templateUrl: 'app.html'
 })
@@ -13,7 +12,7 @@ export class MyApp {
   rootPage;
 
   constructor(platform: Platform, 
-              public storage: Storage) {
+    public storage: Storage) {
 
     this.getIDformStorage();
 
@@ -28,14 +27,14 @@ export class MyApp {
   getIDformStorage(){
     this.storage.ready().then(() => {
       this.storage.get('PatientID').then((id) => {
-          console.log('CheckPatientIDStorage:', id);
+        console.log('CheckPatientIDStorage:', id);
 
-          if(id != null){
-            this.rootPage = DeviceConnectionPage;
-          }else{
-            this.rootPage = LoginPage;
-          }
-        })
-   });
+        if(id != null){
+          this.rootPage = DeviceConnectionPage;
+        }else{
+          this.rootPage = LoginPage;
+        }
+      })
+    });
   }
 }

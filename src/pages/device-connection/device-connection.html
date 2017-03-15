@@ -6,13 +6,36 @@
 -->
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>deviceConnection</ion-title>
-  </ion-navbar>
+	<ion-navbar>
+		<!-- <ion-title>Select your devices</ion-title> -->
+		<ion-title>Device Connection</ion-title>
+	</ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
-	<button ion-button color="primary" block (click)="removeIDStorage()">RemoveID</button>
+
+<ion-content>
+	<button ion-button (click)="getXML()">getXML</button>
+	<button ion-button (click)="scan()">connect</button>
+	<button ion-button (click)="checkInfo()">check</button>
+	<ion-card>
+		<ion-card-content>
+			<h1>{{defaultDevice.name}}</h1>
+			<h3>Device ID: {{defaultDevice.deviceId}}</h3>
+			<h3>Status: {{isConnect ? "Connected" : "Disconnect"}}</h3>
+		</ion-card-content>
+	</ion-card>
+	{{status}}
+	{{info|json}}
+	{{data}}
+
+	<div style="padding: 10px;">
+		<h2>Help</h2>
+		<span>Go to Settings -> Bluetooth -> select device to connect</span>
+	</div>
 </ion-content>
+
+<ion-footer>
+	<button ion-button round full (click)="next()" style="margin-top: 8px; margin-bottom: 8px;">Next</button>
+</ion-footer>

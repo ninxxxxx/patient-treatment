@@ -14,5 +14,14 @@
 
 
 <ion-content padding>
+<button [hidden]="isStart" ion-button (click)="gg()">start</button>
+<button [hidden]="!isStart" ion-button (click)="stop()">stop</button>
+<input type="text" [(ngModel)]="d"/>
 
+<h1>{{ddd}}</h1>
+<h1 hidden="true">{{fff}}</h1>
+<!-- {{device|json}} -->
+Data Amount: {{data.length}} 
+Data
+{{data}}
 </ion-content>
