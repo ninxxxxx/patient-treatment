@@ -29,11 +29,11 @@ export class MyApp {
       this.storage.get('PatientID').then((id) => {
         console.log('CheckPatientIDStorage:', id);
 
-        if(id != null){
+        /*if(id != null){
           this.rootPage = DeviceConnectionPage;
-        }else{
+        }else{*/
           this.rootPage = LoginPage;
-        }
+        //}
       })
     });
   }
