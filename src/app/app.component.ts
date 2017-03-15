@@ -3,12 +3,12 @@ import { Platform } from 'ionic-angular';
 import { StatusBar, Splashscreen } from 'ionic-native';
 
 import { LoginPage } from '../pages/login/login';
-
+import { DeviceConnectionPage } from '../pages/device-connection/device-connection'; 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage = LoginPage;
+  rootPage = DeviceConnectionPage;
 
   constructor(platform: Platform) {
     platform.ready().then(() => {
