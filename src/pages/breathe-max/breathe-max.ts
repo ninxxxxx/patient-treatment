@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 
 import { BLE } from 'ionic-native';
+// import { Chart, ChartComponent } from 'ng2-chartjs2';
+import { BaseChartDirective } from 'ng2-charts/ng2-charts';
+
 /*
   Generated class for the BreatheMax page.
 
@@ -14,14 +17,34 @@ import { BLE } from 'ionic-native';
   })
   export class BreatheMaxPage {
 
+    @ViewChild(BaseChartDirective) chart: BaseChartDirective;
+
     d: string;
     data: any;
     device: any;
     ddd: number;
     fff: number;
+    evrg: number;
     isStart: boolean;
     isConnect: boolean;
+
+    pressure: number;
+    
+    chartData: any;  
+    public doughnutChartLabels:string[] = [];
+    public doughnutChartData:number[] = [0, 0, 0, 255];
+    public doughnutChartType:string = 'doughnut';
+
+    public chartClicked(e:any):void {
+      console.log(e);
+    }
+
+    public chartHovered(e:any):void {
+      console.log(e);
+    }
+
     constructor(public navCtrl: NavController, public navParams: NavParams) {
+      this.evrg = 0;
       this.isStart = false;
       this.isConnect = false;
       this.ddd = 0;
@@ -29,6 +52,20 @@ import { BLE } from 'ionic-native';
       this.data = [];
       this.device = this.navParams.get('device');
       this.ff();  
+
+      this.pressure = 0;
+      this.chartData = [
+      {
+        label: '# of Votes',
+        data: [10, 12, 15, 100],
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 206, 86, 0.2)',
+
+        ],
+      }
+      ];
     }
 
     ionViewDidLoad() {
@@ -44,7 +81,7 @@ import { BLE } from 'ionic-native';
 
         if(this.fff != 10)
           this.fff += 1;
-      }, 50);
+      }, 10);
     }
 
 
@@ -55,8 +92,10 @@ import { BLE } from 'ionic-native';
         buffer =>{
           let dd = new Uint8Array(buffer);
           // this.ddd += 1;
-          this.data.push(dd[1])
+          // this.data.push(dd[1])
+
           this.d = "" + dd[1];
+          this.updateChart(dd[1]);
           // console.log(dd[1]);
         },
         err =>{
@@ -71,6 +110,7 @@ import { BLE } from 'ionic-native';
         data=>{
           this.isStart = false;
           console.log(data);
+          this.updateChart(0);
         }).catch(
         err =>{
           console.error(err);
@@ -81,4 +121,27 @@ import { BLE } from 'ionic-native';
       setD(data){
         this.d = data;
       }
+
+      updateChart(value){
+
+        if(value <= 59){
+          this.doughnutChartData[0] = value;
+          this.doughnutChartData[1] = 0;
+          this.doughnutChartData[2] = 0;
+        }else if(value < 120){
+          this.doughnutChartData[0] = 59;
+          this.doughnutChartData[1] = value-59;
+          this.doughnutChartData[2] = 0;
+        }else if(value <= 255){
+          this.doughnutChartData[0] = 59;
+          this.doughnutChartData[1] = 120 - 59;
+          this.doughnutChartData[2] = value - 120;
+        }
+        this.doughnutChartData[3] = 255 - value; 
+        this.chart.chart.update();
+
+      }
+
+
+
     }

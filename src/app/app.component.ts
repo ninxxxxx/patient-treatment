@@ -4,10 +4,12 @@ import { StatusBar, Splashscreen } from 'ionic-native';
 
 import { LoginPage } from '../pages/login/login';
 import { DeviceConnectionPage } from '../pages/device-connection/device-connection'; 
+import { BreatheMaxPage } from '../pages/breathe-max/breathe-max';
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
+  // rootPage = BreatheMaxPage;
   rootPage = DeviceConnectionPage;
 
   constructor(platform: Platform) {

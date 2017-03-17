@@ -6,22 +6,39 @@
 -->
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>breatheMax</ion-title>
-  </ion-navbar>
+	<ion-navbar>
+		<ion-title>breatheMax</ion-title>
+	</ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-<button [hidden]="isStart" ion-button (click)="gg()">start</button>
-<button [hidden]="!isStart" ion-button (click)="stop()">stop</button>
-<input type="text" [(ngModel)]="d"/>
-
-<h1>{{ddd}}</h1>
-<h1 hidden="true">{{fff}}</h1>
-<!-- {{device|json}} -->
-Data Amount: {{data.length}} 
-Data
-{{data}}
+	
+	<h1 hidden="true">{{fff}}</h1>
+	<ion-grid>
+	<ion-row style="text-align: center;">
+			<ion-col>
+				<h1>{{d}}</h1>
+			</ion-col>
+		</ion-row>
+		<ion-row style="text-align: center;">
+			<ion-col style="text-align: center;">
+				<div style="display: block">
+					<canvas baseChart
+					[data]="doughnutChartData"
+					[labels]="doughnutChartLabels"
+					[chartType]="doughnutChartType"
+					(chartHover)="chartHovered($event)"
+					(chartClick)="chartClicked($event)"></canvas>
+				</div>
+			</ion-col>
+		</ion-row>
+		<ion-row style="text-align: center;">
+			<ion-col>
+				<button [hidden]="isStart" ion-button full (click)="gg()">start</button>
+				<button [hidden]="!isStart" ion-button full (click)="stop()">stop</button>			
+			</ion-col>
+		</ion-row>
+	</ion-grid>
 </ion-content>
