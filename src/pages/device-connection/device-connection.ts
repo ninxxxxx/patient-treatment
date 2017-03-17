@@ -25,6 +25,7 @@ import { PatientService } from '../../providers/patient-service';
   export class DeviceConnectionPage {
   	deviceCode: any;
 
+
   	defaultDevice: any;
   	devices: any;
   	userInfo: any;

@@ -1,3 +1,43 @@
 page-login {
+	.logo {
+		display: block;
+		height: 20%;
+    	width: auto;
+	    margin-left: auto;
+	    margin-right: auto;
+	    margin-top: 10%;
+	    margin-bottom: 5%;
+	}
 
+	.copyright{
+		font-size: 40%;
+		text-align: center;
+		margin-top: 30%;
+		margin-bottom: 30%;
+	}
+
+	h1{
+		font-size: 40px;
+		font-weight: bold;
+		color: #00b38f;
+		text-align: center;
+	    margin-top: 30%;
+	    margin-bottom: 5%;
+	}
+
+	#grid{
+		text-align:center;
+	}
+
+	#row{
+		margin-left:0px;
+	}
+
+	#item{
+		padding-right:16px;
+	}
+
+	#col-button{
+		padding-left:16px; padding-right:16px;
+	}
 }
