@@ -1,0 +1,27 @@
+<ion-header>
+</ion-header>
+
+<ion-content>
+  <ion-slides pager>
+    <ion-slide *ngFor="let slide of slides">
+      <ion-toolbar>
+        <ion-buttons end style="margin-top: 16px">
+          <button ion-button color="primary" (click)="skip()">ข้าม</button>
+        </ion-buttons>
+      </ion-toolbar>
+      <img [src]="slide.image" class="slide-image"/>
+      <h2 class="slide-title" [innerHTML]="slide.title"></h2>
+      <p [innerHTML]="slide.description"></p>
+    </ion-slide>
+    <ion-slide>
+      <ion-toolbar>
+      </ion-toolbar>
+      <img src="assets/img/question-speech-bubble.png" class="slide-image"/>
+      <h2 class="slide-title">พร้อมแล้วใช่ไหม?</h2>
+      <button ion-button large clear icon-right color="primary" (click)="skip()">
+        เข้าสู่โปรแกรม
+        <ion-icon name="arrow-forward"></ion-icon>
+      </button>
+    </ion-slide>
+  </ion-slides>
+</ion-content>

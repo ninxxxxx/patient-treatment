@@ -15,12 +15,15 @@ import { MyApp } from './app.component';
 import { LoginPage } from '../pages/login/login';
 import { DeviceConnectionPage } from '../pages/device-connection/device-connection';
 import { BreatheMaxPage } from '../pages/breathe-max/breathe-max';
+import { HelpPage } from '../pages/help/help';
+
 @NgModule({
   declarations: [
   MyApp,
   LoginPage,
   DeviceConnectionPage,
   BreatheMaxPage,
+  HelpPage
 
   ],
   imports: [
@@ -33,6 +36,7 @@ import { BreatheMaxPage } from '../pages/breathe-max/breathe-max';
   LoginPage,
   DeviceConnectionPage,
   BreatheMaxPage,
+  HelpPage
 
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Storage]

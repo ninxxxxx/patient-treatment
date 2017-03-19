@@ -6,6 +6,7 @@ import { Storage } from '@ionic/storage';
 import { LoginPage } from '../pages/login/login';
 import { DeviceConnectionPage } from '../pages/device-connection/device-connection'; 
 import { BreatheMaxPage } from '../pages/breathe-max/breathe-max';
+import { HelpPage } from '../pages/help/help';
 @Component({
   templateUrl: 'app.html'
 })
@@ -30,6 +31,8 @@ export class MyApp {
     this.storage.ready().then(() => {
       this.storage.get('PatientID').then((id) => {
         console.log('CheckPatientIDStorage:', id);
+
+        //this.rootPage = HelpPage;
 
         if(id != null){
           this.rootPage = DeviceConnectionPage;
