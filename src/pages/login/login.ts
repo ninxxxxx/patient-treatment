@@ -106,8 +106,8 @@ export class LoginPage {
         if (xhr.readyState === xhr.DONE) {
           if (xhr.status === 200) {
             ff = xhr.response;
-            //console.log(xhr.response);
-            //console.log(xhr.responseXML);
+            console.log(xhr.response);
+            console.log(xhr.responseXML);
             return xhr.response; 
           }
         }
@@ -121,6 +121,7 @@ export class LoginPage {
         let json = parser.xml2js(xml);
         console.log(json);
 
+        //Don't foget make toast for server or network error
         this.getpatientID = json.configurations.configuration.Patient_ID;
         console.log(this.getpatientID);
 
