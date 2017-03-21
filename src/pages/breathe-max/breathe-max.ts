@@ -2,6 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 
 import { BLE } from 'ionic-native';
+import { Storage } from '@ionic/storage';
+
 // import { Chart, ChartComponent } from 'ng2-chartjs2';
 import { BaseChartDirective } from 'ng2-charts/ng2-charts';
 
@@ -27,10 +29,27 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
     evrg: number;
     isStart: boolean;
     isConnect: boolean;
-
-    pressure: number;
-    
     chartData: any;  
+
+
+
+    //Treatment info
+    treatInfo: any;
+    
+    // pressure: number;    
+    setCounter: number;
+    totalSet: number;
+    totalDay: number;
+    totalWeek: number;
+
+    //for countDown
+    interval: any;
+    isCountDown:  boolean;
+    //========================
+    wi: string;
+    wii :number;
+    //3AF779 F7C33A FA7155
+
     public doughnutChartLabels:string[] = [];
     public doughnutChartData:number[] = [0, 0, 0, 255];
     public doughnutChartType:string = 'doughnut';
@@ -43,29 +62,29 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
       console.log(e);
     }
 
-    constructor(public navCtrl: NavController, public navParams: NavParams) {
-      this.evrg = 0;
+    constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage) {
       this.isStart = false;
       this.isConnect = false;
       this.ddd = 0;
       this.fff = 0;
       this.data = [];
+      this.d = "0";
       this.device = this.navParams.get('device');
+
+      // Treatment info
+      this.treatInfo = {
+        WeekNO: 0,
+        Threshold1: 0,
+        NoDayinWeek: 0,
+        NoSetinDay: 0,
+        NoTimeinSet: 0,  
+      }
+      this.getTreatInfo();
+
+      this.wi = 0 + "%";
       this.ff();  
 
-      this.pressure = 0;
-      this.chartData = [
-      {
-        label: '# of Votes',
-        data: [10, 12, 15, 100],
-        backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
 
-        ],
-      }
-      ];
     }
 
     ionViewDidLoad() {
@@ -78,25 +97,20 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
 
     ff(){
       let i = setInterval(()=>{
-
-        if(this.fff != 10)
-          this.fff += 1;
+        this.fff++;
       }, 10);
     }
 
 
 
-    gg(){
+    start(){
       this.isStart = true;
       BLE.startNotification(this.device.peripheralId, this.device.service, this.device.measurement).subscribe(
         buffer =>{
           let dd = new Uint8Array(buffer);
-          // this.ddd += 1;
-          // this.data.push(dd[1])
-
           this.d = "" + dd[1];
           this.updateChart(dd[1]);
-          // console.log(dd[1]);
+          this.checkForCountDown(dd[1]);
         },
         err =>{
           console.log("ERROR FROM STARTNOTIFICATION " + err);
@@ -116,10 +130,6 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
           console.error(err);
         }
         )
-      }
-
-      setD(data){
-        this.d = data;
       }
 
       updateChart(value){
@@ -142,6 +152,55 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
 
       }
 
+      changeWidth(value){
+        this.wi = value + "%";
+      }
 
+      checkForCountDown(value){
+        if(value >= 80){
+          if(!this.isCountDown){
+            this.countDown(5);
+            this.isCountDown = true;
+            console.log("isCountDown!");
+          }
+        }else{
+          this.wi = "0%";
+          this.isCountDown = false;
+          console.log("is not CountDown");
+          clearInterval(this.interval);
+        }
+      }
 
-    }
+      countDown(sec){
+        let milli = 0;
+        let percent = 0;
+        this.interval = setInterval(()=>{
+          milli += 25;
+          percent = (milli / (sec * 1000)) * 100; 
+          console.log("percent " + percent);
+          this.wi = percent + "%";
+          if(milli == (sec * 1000)){
+            console.log("success");
+            this.treatInfo.NoTimeinSet++;
+            clearInterval(this.interval);
+          }
+        }, 25);
+      }
+      getTreatInfo(){
+        Promise.all([
+          this.storage.get('WeekNO'),
+          this.storage.get('Threshold1'),
+          this.storage.get('NoDayinWeek'),
+          this.storage.get('NoSetinDay'),
+          this.storage.get('NoTimeinSet'),
+          ]).then(values =>{
+            this.treatInfo.WeekNO = values[0]
+            this.treatInfo.Threshold1 = values[1]
+            this.treatInfo.NoDayinWeek = values[2]
+            this.treatInfo.NoSetinDay = values[3]
+            this.treatInfo.NoTimeinSet = values[4]
+            console.log(values);
+          })
+
+        }
+      }

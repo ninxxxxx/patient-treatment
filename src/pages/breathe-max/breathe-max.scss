@@ -1,3 +1,27 @@
 page-breathe-max {
+	ion-content{
+		height: 100%;
+	}
+	.user-info{
+		background-color: #edecec;
+		// min-height: 100px;
+		padding: 16px;
+		border-radius: 10px;
 
+		ion-grid{
+			padding: 0px;
+
+			ion-row{
+				ion-col{
+					padding: 0px;
+					p{
+						margin: 0px;
+					}
+					h3{
+						margin: 0px;
+					}
+				}
+			}
+		}
+	}
 }
