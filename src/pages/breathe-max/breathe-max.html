@@ -43,20 +43,22 @@
 			</ion-col>
 		</ion-row>
 		<ion-row style="text-align: right;">
-			<ion-col style="text-align: center;">
-				{{"5s"}}
-				<div style="background-color: #edecec; min-height: 10px; border-radius: 5px;">
-					<div [ngStyle]="{'background-color': '#ff9e6e', 'min-height':'10px', 'border-radius': '5px', 'width': wi}"></div>
+			<ion-col style="text-align: center; padding-top: 0px; padding-bottom: 0px;">
+				<div style="background-color: #edecec; min-height: 20px; border-radius: 5px;">
+					
+					<div [ngStyle]="{'background-color': '#ff9e6e', 'min-height':'20px', 'border-radius': '5px', 'width': wi}">
+						
+					</div>
 				</div>
 			</ion-col>
 		</ion-row>
 		<ion-row style="text-align: center;">
-			<ion-col>
-				<h1>{{d}}</h1>
+			<ion-col style="text-align: center; padding-top: 0px; padding-bottom: 0px;">
+				<h1 style="padding: 0px; margin: 0px;">{{d}}</h1>
 			</ion-col>
 		</ion-row>
 		<ion-row style="text-align: center;">
-			<ion-col style="text-align: center;">
+			<ion-col style="text-align: center; padding-top: 0px; padding-bottom: 0px;">
 				<div style="display: block">
 					<canvas baseChart
 					[data]="doughnutChartData"
@@ -68,7 +70,7 @@
 			</ion-col>
 		</ion-row>
 		<ion-row style="text-align: center;">
-			<ion-col>
+			<ion-col style="text-align: center; padding-top: 0px; padding-bottom: 0px;">
 				<button [hidden]="isStart" ion-button full (click)="start()">start</button>
 				<button [hidden]="!isStart" ion-button full (click)="stop()">stop</button>			
 			</ion-col>

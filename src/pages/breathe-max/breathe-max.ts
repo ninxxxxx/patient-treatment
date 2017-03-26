@@ -98,6 +98,8 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
     ff(){
       let i = setInterval(()=>{
         this.fff++;
+        if(this.fff == 10000)
+          clearInterval(i);
       }, 10);
     }
 
@@ -122,6 +124,7 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
       BLE.stopNotification(this.device.peripheralId, this.device.service, this.device.measurement)
       .then(
         data=>{
+          this.d = "0";
           this.isStart = false;
           console.log(data);
           this.updateChart(0);

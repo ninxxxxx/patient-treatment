@@ -17,9 +17,9 @@ export class MyApp {
   constructor(platform: Platform, 
     public storage: Storage) {
 
-    // this.rootPage = BreatheMaxPage;
+    this.rootPage = BreatheMaxPage;
     // this.rootPage = DeviceConnectionPage;
-    this.getIDformStorage();
+    // this.getIDformStorage();
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -42,5 +42,5 @@ export class MyApp {
         }
       })
     });
-  }
+  }///
 }
