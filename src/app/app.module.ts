@@ -16,6 +16,7 @@ import { LoginPage } from '../pages/login/login';
 import { DeviceConnectionPage } from '../pages/device-connection/device-connection';
 import { BreatheMaxPage } from '../pages/breathe-max/breathe-max';
 import { HelpPage } from '../pages/help/help';
+import { PatientDataPage } from '../pages/patient-data/patient-data';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { HelpPage } from '../pages/help/help';
   LoginPage,
   DeviceConnectionPage,
   BreatheMaxPage,
-  HelpPage
+  HelpPage,
+  PatientDataPage
 
   ],
   imports: [
@@ -36,7 +38,8 @@ import { HelpPage } from '../pages/help/help';
   LoginPage,
   DeviceConnectionPage,
   BreatheMaxPage,
-  HelpPage
+  HelpPage,
+  PatientDataPage
 
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Storage]

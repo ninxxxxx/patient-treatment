@@ -1,11 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { ModalController, NavController, NavParams } from 'ionic-angular';
 
 import { BLE } from 'ionic-native';
 import { Storage } from '@ionic/storage';
 
 // import { Chart, ChartComponent } from 'ng2-chartjs2';
 import { BaseChartDirective } from 'ng2-charts/ng2-charts';
+import { PatientDataPage } from '../patient-data/patient-data';
 
 /*
   Generated class for the BreatheMax page.
@@ -62,7 +63,7 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
       console.log(e);
     }
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage) {
+    constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public modalCtrl: ModalController) {
       this.isStart = false;
       this.isConnect = false;
       this.ddd = 0;
@@ -70,6 +71,9 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
       this.data = [];
       this.d = "0";
       this.device = this.navParams.get('device');
+
+      let modal = this.modalCtrl.create(PatientDataPage);
+      modal.present();
 
       // Treatment info
       this.treatInfo = {

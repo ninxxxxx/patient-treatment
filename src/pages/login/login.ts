@@ -5,6 +5,7 @@ import { ToastController } from 'ionic-angular';
 import X2JS from 'x2js';
 
 import { DeviceConnectionPage } from '../device-connection/device-connection';
+import { BreatheMaxPage } from '../breathe-max/breathe-max';
 
 
 
@@ -57,6 +58,7 @@ export class LoginPage {
          this.storage.set('StaffID', this.getStaffID);
          this.storage.set('DeviceID', this.getDeviceID);
          this.storage.set('WeekNO', this.getWeekNO);
+         this.storage.set('ThresholdDateTime', this.getThresholdDateTime);
          this.storage.set('Threshold1', this.getThreshold1);
          this.storage.set('Threshold2', this.getThreshold2);
          this.storage.set('Threshold3', this.getThreshold3);
@@ -149,7 +151,8 @@ export class LoginPage {
             this.username = null;
             this.password = null;
 
-            this.navCtrl.push(DeviceConnectionPage);            
+            //this.navCtrl.push(DeviceConnectionPage);
+            this.navCtrl.push(BreatheMaxPage);          
         }else{
             let toast = this.toastCtrl.create({
             message: this.username + ", not register.",
