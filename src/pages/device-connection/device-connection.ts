@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ModalController, NavController, NavParams, ToastController } from 'ionic-angular';
-import { BLE } from 'ionic-native';
+import { BLE } from '@ionic-native/ble';
 import { Storage } from '@ionic/storage';
 import { BaseChartDirective, ChartsModule} from 'ng2-charts';
 
@@ -37,6 +37,7 @@ datas: any;
 chartType:string;
 
 constructor(
+  private ble: BLE,
   public storage: Storage, 
   private patientService: PatientService, 
   public toastCtrl: ToastController, 
@@ -76,14 +77,14 @@ ionViewDidLoad() {
 
 ionViewWillUnload(){
   if(this.isConnected()){
-    BLE.disconnect(this.defaultDevice.peripheralId)
+    this.ble.disconnect(this.defaultDevice.peripheralId)
     .then(()=>console.log("Peripheral is Disconnected"))
     .catch(err => console.error(err));
   }
 }
 
 isConnected(){
-  BLE.isConnected(this.defaultDevice.peripheralId)
+  this.ble.isConnected(this.defaultDevice.peripheralId)
   .then(()=>{
     this.isConnect = true;
     this.status = "Connected";
@@ -99,11 +100,11 @@ isConnected(){
 scan(){
   // this.isConnect = true;
   this.status = "Scanning...";
-  BLE.scan([this.defaultDevice.service], 5).subscribe(
+  this.ble.scan([this.defaultDevice.service], 5).subscribe(
     device =>{
-      BLE.connect(device.id).subscribe(
+      this.ble.connect(device.id).subscribe(
         peripheral=>{
-          BLE.isConnected(peripheral.id)
+          this.ble.isConnected(peripheral.id)
           .then(()=>{
             this.isConnect = true;
             this.status = "Connected";
@@ -136,7 +137,7 @@ toast(msgs: string, ms: number){
 }
 
 disconnect(){
-  BLE.disconnect(this.defaultDevice.peripheralId)
+  this.ble.disconnect(this.defaultDevice.peripheralId)
   .then(data=>{
     this.isConnect = false;
     this.toast("Disconnected", 3000);

@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ModalController, NavController, NavParams } from 'ionic-angular';
 
-import { BLE } from 'ionic-native';
+import { BLE } from '@ionic-native/ble';
 import { Storage } from '@ionic/storage';
 
 // import { Chart, ChartComponent } from 'ng2-chartjs2';
@@ -63,7 +63,14 @@ import { PatientDataPage } from '../patient-data/patient-data';
       console.log(e);
     }
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public modalCtrl: ModalController) {
+    constructor(
+      private ble: BLE,
+      public navCtrl: NavController, 
+      public navParams: NavParams, 
+      public storage: Storage, 
+      public modalCtrl: ModalController
+      ) 
+    {
       this.isStart = false;
       this.isConnect = false;
       this.ddd = 0;
@@ -111,7 +118,7 @@ import { PatientDataPage } from '../patient-data/patient-data';
 
     start(){
       this.isStart = true;
-      BLE.startNotification(this.device.peripheralId, this.device.service, this.device.measurement).subscribe(
+      this.ble.startNotification(this.device.peripheralId, this.device.service, this.device.measurement).subscribe(
         buffer =>{
           let dd = new Uint8Array(buffer);
           this.d = "" + dd[1];
@@ -125,7 +132,7 @@ import { PatientDataPage } from '../patient-data/patient-data';
     }
 
     stop(){
-      BLE.stopNotification(this.device.peripheralId, this.device.service, this.device.measurement)
+      this.ble.stopNotification(this.device.peripheralId, this.device.service, this.device.measurement)
       .then(
         data=>{
           this.d = "0";

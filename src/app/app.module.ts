@@ -1,11 +1,12 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { Storage } from '@ionic/storage';
-// import { ChartsModule } from 'ng2-chartjs2';
+import { HttpModule } from '@angular/http';
+import { IonicStorageModule } from '@ionic/storage';
+import { BrowserModule } from '@angular/platform-browser';
 import { ChartsModule } from 'ng2-charts';
+import { BLE } from '@ionic-native/ble';
 
 import '../../node_modules/chart.js/src/chart.js';
-// import '../../node_modules/ng2-chartjs2/components/chart.js';
 
 import { MyApp } from './app.component';
 
@@ -29,8 +30,11 @@ import { PatientDataPage } from '../pages/patient-data/patient-data';
 
   ],
   imports: [
-  IonicModule.forRoot(MyApp),
+  HttpModule,
+  BrowserModule,
   ChartsModule,
+  IonicStorageModule.forRoot(MyApp),
+  IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -42,6 +46,6 @@ import { PatientDataPage } from '../pages/patient-data/patient-data';
   PatientDataPage
 
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, Storage]
+  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}, BLE]
 })
 export class AppModule {}
