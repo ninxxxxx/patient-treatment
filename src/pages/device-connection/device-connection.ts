@@ -8,6 +8,7 @@ import { BaseChartDirective, ChartsModule} from 'ng2-charts';
 import { BreatheMaxPage } from '../../pages/breathe-max/breathe-max';
 import { PatientService } from '../../providers/patient-service';
 import { HelpPage } from '../help/help';
+import { PatientDataPage } from '../../pages/patient-data/patient-data';
 // import { DoughnutChartComponent } from '../../components/doughnut-chart/doughnut-chart';
 /*
 Generated class for the DeviceConnection page.
@@ -22,44 +23,44 @@ Ionic pages and navigation.
 
 })
 export class DeviceConnectionPage {
-deviceCode: any;
+  deviceCode: any;
 
 
-defaultDevice: any;
-devices: any;
-userInfo: any;
-isConnect: boolean;
-interval: any;
-info: any;
-status: string;
-datas: any;
+  defaultDevice: any;
+  devices: any;
+  userInfo: any;
+  isConnect: boolean;
+  interval: any;
+  info: any;
+  status: string;
+  datas: any;
 
-chartType:string;
+  chartType:string;
 
-constructor(
-  private ble: BLE,
-  public storage: Storage, 
-  private patientService: PatientService, 
-  public toastCtrl: ToastController, 
-  public navCtrl: NavController, 
-  public navParams: NavParams,
-  public modalCtrl: ModalController
-) 
-{
+  constructor(
+    private ble: BLE,
+    public storage: Storage, 
+    private patientService: PatientService, 
+    public toastCtrl: ToastController, 
+    public navCtrl: NavController, 
+    public navParams: NavParams,
+    public modalCtrl: ModalController
+    ) 
+  {
 
-  this.datas = [];
-  // this.data = new Promise<string>
-  this.status = "connect your device...";
-  this.defaultDevice = {
-  service: '180D',
-  measurement: '2A37',
-  peripheralId: ''
-  };
-  this.isConnect = false;
-  this.userInfo = {deviceId:7};
-  this.devices = [{name: "ATMEL-HRP", id:"F8:F0:05:F5:1B:DA", deviceId:7}]; 
+    this.datas = [];
+    // this.data = new Promise<string>
+    this.status = "connect your device...";
+    this.defaultDevice = {
+      service: '180D',
+      measurement: '2A37',
+      peripheralId: ''
+    };
+    this.isConnect = false;
+    this.userInfo = {deviceId:7};
+    this.devices = [{name: "ATMEL-HRP", id:"F8:F0:05:F5:1B:DA", deviceId:7}]; 
 
-  this.storage.ready().then(() => {
+    this.storage.ready().then(() => {
       this.storage.get('ShowHelp').then((show) => {
 
         if(show == null){
@@ -69,131 +70,88 @@ constructor(
       })
     });
 
-}
+    this.openPatientDataModal();
 
-ionViewDidLoad() {
-  console.log('ionViewDidLoad DeviceConnectionPage');
-}
-
-ionViewWillUnload(){
-  if(this.isConnected()){
-    this.ble.disconnect(this.defaultDevice.peripheralId)
-    .then(()=>console.log("Peripheral is Disconnected"))
-    .catch(err => console.error(err));
   }
-}
 
-isConnected(){
-  this.ble.isConnected(this.defaultDevice.peripheralId)
-  .then(()=>{
-    this.isConnect = true;
-    this.status = "Connected";
+  ionViewDidLoad() {
+    console.log('ionViewDidLoad DeviceConnectionPage');
+  }
 
-  })
-  .catch(err =>{
-    this.isConnect = false
-    this.status = "Can't connect";
-
-  });
-}
-
-scan(){
-  // this.isConnect = true;
-  this.status = "Scanning...";
-  this.ble.scan([this.defaultDevice.service], 5).subscribe(
-    device =>{
-      this.ble.connect(device.id).subscribe(
-        peripheral=>{
-          this.ble.isConnected(peripheral.id)
-          .then(()=>{
-            this.isConnect = true;
-            this.status = "Connected";
-            this.defaultDevice.peripheralId = peripheral.id;
-
-          })
-          .catch(err =>{
-            this.isConnect = false
-            this.status = "Can't connect";
-
-          });
-          // this.status = "Connected to " + peripheral.id;
-        }
-      )
-    },
-    err =>{
-    console.log("err" + err);
+  ionViewWillUnload(){
+    if(this.isConnected()){
+      this.ble.disconnect(this.defaultDevice.peripheralId)
+      .then(()=>console.log("Peripheral is Disconnected"))
+      .catch(err => console.error(err));
     }
-  )
-}
+  }
 
-next(){
-  this.navCtrl.push(BreatheMaxPage, {device: this.defaultDevice});
-}
+  isConnected(){
+    this.ble.isConnected(this.defaultDevice.peripheralId)
+    .then(()=>{
+      this.isConnect = true;
+      this.status = "Connected";
+
+    })
+    .catch(err =>{
+      this.isConnect = false
+      this.status = "Can't connect";
+
+    });
+  }
+
+  scan(){
+    // this.isConnect = true;
+    this.status = "Scanning...";
+    this.ble.scan([this.defaultDevice.service], 5).subscribe(
+      device =>{
+        this.ble.connect(device.id).subscribe(
+          peripheral=>{
+            this.ble.isConnected(peripheral.id)
+            .then(()=>{
+              this.isConnect = true;
+              this.status = "Connected";
+              this.defaultDevice.peripheralId = peripheral.id;
+
+            })
+            .catch(err =>{
+              this.isConnect = false
+              this.status = "Can't connect";
+
+            });
+            // this.status = "Connected to " + peripheral.id;
+          }
+          )
+      },
+      err =>{
+        console.log("err" + err);
+      }
+      )
+  }
+
+  next(){
+    this.navCtrl.push(BreatheMaxPage, {device: this.defaultDevice});
+  }
 
 
-toast(msgs: string, ms: number){
-  let t = this.toastCtrl.create({message: msgs, duration: ms})
-  t.present();
-}
+  toast(msgs: string, ms: number){
+    let t = this.toastCtrl.create({message: msgs, duration: ms})
+    t.present();
+  }
 
-disconnect(){
-  this.ble.disconnect(this.defaultDevice.peripheralId)
-  .then(data=>{
-    this.isConnect = false;
-    this.toast("Disconnected", 3000);
-  })
-  .catch(err=>{
-    this.toast(""+err, 3000);
-  })
-}
+  disconnect(){
+    this.ble.disconnect(this.defaultDevice.peripheralId)
+    .then(data=>{
+      this.isConnect = false;
+      this.toast("Disconnected", 3000);
+    })
+    .catch(err=>{
+      this.toast(""+err, 3000);
+    })
+  }
 
-
-//get XML Value
-// getXML(){
-//   let xhr = new XMLHttpRequest();
-//   let ff = "";
-//   xhr.open('GET', "http://www.nbtcrehab.eng.psu.ac.th:8080/ConfigurationServer/webresources/getthreshold?Patient_ID=58333333&Device_ID=7", true);
-
-//   // If specified, responseType must be empty string or "document"
-//   xhr.responseType = 'document';
-
-//   // overrideMimeType() can be used to force the response to be parsed as XML
-//   xhr.overrideMimeType('text/xml');
-
-//   xhr.onload = function () {
-//     if (xhr.readyState === xhr.DONE) {
-//       if (xhr.status === 200) {
-//         ff = xhr.response;
-//         console.log(xhr.response);
-//         console.log(xhr.responseXML);
-//         return xhr.response; 
-//       }
-//     }
-//   };
-//   xhr.send(null);
-//   setTimeout(()=>{
-//     console.log("ff: ", ff);
-//   }, 3000);
-// }
-
-// get set Storage
-// dd(){
-//   this.storage.set("id", "obj1").then(()=>{
-//     console.log("success");
-//     this.storage.set("id", "obj2").then(()=>{
-//       console.log("success");
-//       this.storage.get("id").then(data=>{
-//         console.log(data);
-//       }).catch(()=>{console.log("error to get data");});
-//     }
-//     ).catch(()=>{
-//       console.log("error");
-//     }
-//     );
-//   }
-//   ).catch(()=>{
-//     console.log("error");
-//   }
-//   );
-// }
+  openPatientDataModal(){
+    let modal = this.modalCtrl.create(PatientDataPage);
+    modal.present();
+  }
 }

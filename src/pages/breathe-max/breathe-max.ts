@@ -6,7 +6,6 @@ import { Storage } from '@ionic/storage';
 
 // import { Chart, ChartComponent } from 'ng2-chartjs2';
 import { BaseChartDirective } from 'ng2-charts/ng2-charts';
-import { PatientDataPage } from '../patient-data/patient-data';
 
 /*
   Generated class for the BreatheMax page.
@@ -79,9 +78,7 @@ import { PatientDataPage } from '../patient-data/patient-data';
       this.d = "0";
       this.device = this.navParams.get('device');
 
-      let modal = this.modalCtrl.create(PatientDataPage);
-      modal.present();
-
+      
       // Treatment info
       this.treatInfo = {
         WeekNO: 0,
@@ -95,16 +92,11 @@ import { PatientDataPage } from '../patient-data/patient-data';
       this.wi = 0 + "%";
       this.ff();  
 
-
     }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad BreatheMaxPage');
-    }
-
-
-
-    
+    }    
 
     ff(){
       let i = setInterval(()=>{

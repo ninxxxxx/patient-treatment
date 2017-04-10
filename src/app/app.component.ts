@@ -38,8 +38,8 @@ export class MyApp {
         //this.rootPage = HelpPage;
 
         if(id != null){
-          //this.rootPage = DeviceConnectionPage;
-          this.rootPage = BreatheMaxPage;
+          this.rootPage = DeviceConnectionPage;
+          // this.rootPage = BreatheMaxPage;
         }else{
           this.rootPage = LoginPage;
         }
