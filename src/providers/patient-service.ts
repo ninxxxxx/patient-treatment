@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import X2JS from 'x2js';
+
 import 'rxjs/add/operator/map';
 
 /*
@@ -16,14 +18,37 @@ import 'rxjs/add/operator/map';
   		console.log('Hello PatientService Provider');
   	}
 
-  	login(id: string){
-  		let url = "http://www.nbtcrehab.eng.psu.ac.th:8080/ConfigurationServer/webresources/getthreshold?Patient_ID=" + id + "&Device_ID=7";
-  		let header = new Headers({'Content-Type': 'application/xml'});
-  		// let header = new Headers({});
+  	login(){
+  		let url = "http://www.nbtcrehab.eng.psu.ac.th:8080/ConfigurationServer/webresources/getthreshold?Patient_ID=58333333&Device_ID=7";
+  		let header = new Headers({'Content-Type': 'text/plain'});
   		let options = new RequestOptions({headers: header})
   		let response = this.http.get(url, options)
-  		.map(res => ""+res);
+  		.map(res => this.parseXtoJ(res));
   		return response;
   		
   	}
+
+    getCurrent(){
+      let url = "http://nbtcrehab.eng.psu.ac.th:8080/ConfigurationServer/webresources/getcurrent?Patient_ID=58333333&Device_ID=7";
+      // let header = new Headers({'Content-Type': 'text/plain'});
+      // let options = new RequestOptions({headers: header})
+      let response = this.http.get(url)
+      .map(res => this.parseXtoJ(res));
+      return response;
+
+    }
+
+
+    getXml(){
+      let res = this.http.get('http://www.gazetaexpress.com/rss/sport/?xml=1');
+      return res;
+    }
+
+    parseXtoJ(xml){
+      let l = JSON.parse(JSON.stringify(xml));
+      // console.log("data", l._body);
+      let parser : any = new X2JS();
+      let json = parser.xml2js(l._body);
+      return json;      
+    }
   }

@@ -17,18 +17,18 @@ export class HomePage {
 		this.dd();
 	}
 
-	getPatientData(){
-		this.patientService.login("58333333").subscribe(
-			res => {
-				this.res = res;
-				console.log(res);
-			},
-			err => {
-				console.log(err);
-			}
+	// getPatientData(){
+	// 	this.patientService.login("58333333").subscribe(
+	// 		res => {
+	// 			this.res = res;
+	// 			console.log(res);
+	// 		},
+	// 		err => {
+	// 			console.log(err);
+	// 		}
 
-			)
-	}
+	// 		)
+	// }
 
 	dd(){
 		let url = "http://www.nbtcrehab.eng.psu.ac.th:8080/ConfigurationServer/webresources/getthreshold?Patient_ID=58333333&Device_ID=7";

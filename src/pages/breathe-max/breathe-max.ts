@@ -4,8 +4,10 @@ import { ModalController, NavController, NavParams } from 'ionic-angular';
 import { BLE } from '@ionic-native/ble';
 import { Storage } from '@ionic/storage';
 
-// import { Chart, ChartComponent } from 'ng2-chartjs2';
 import { BaseChartDirective } from 'ng2-charts/ng2-charts';
+// import { Chart, ChartComponent } from 'ng2-chartjs2';
+
+import { PatientService } from '../../providers/patient-service';
 
 /*
   Generated class for the BreatheMax page.
@@ -15,7 +17,8 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
   */
   @Component({
   	selector: 'page-breathe-max',
-  	templateUrl: 'breathe-max.html'
+  	templateUrl: 'breathe-max.html',
+    providers: [PatientService]
   })
   export class BreatheMaxPage {
 
@@ -31,7 +34,7 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
     isConnect: boolean;
     chartData: any;  
 
-
+    currentData: any;
 
     //Treatment info
     treatInfo: any;
@@ -50,6 +53,8 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
     wii :number;
     //3AF779 F7C33A FA7155
 
+
+
     public doughnutChartLabels:string[] = [];
     public doughnutChartData:number[] = [0, 0, 0, 255];
     public doughnutChartType:string = 'doughnut';
@@ -63,6 +68,7 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
     }
 
     constructor(
+      private patientService: PatientService,
       private ble: BLE,
       public navCtrl: NavController, 
       public navParams: NavParams, 
@@ -207,6 +213,22 @@ import { BaseChartDirective } from 'ng2-charts/ng2-charts';
             this.treatInfo.NoTimeinSet = values[4]
             console.log(values);
           })
+        }
 
+        getCurrentData(){
+          this.patientService.getCurrent().subscribe(
+            data=>{
+              let current = data.current;
+              console.log("current", current);
+            }
+            )
+        }
+        getThesholdData(){
+          this.patientService.login().subscribe(
+            data=>{
+              let th = data.configurations.configuration;
+              console.log("theshold", th);
+            }
+            )
         }
       }
