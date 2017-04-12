@@ -24,7 +24,15 @@ import { PatientService } from '../../providers/patient-service';
 
     @ViewChild(BaseChartDirective) chart: BaseChartDirective;
 
-    d: string;
+    d: string;//value of current pressure 
+    sumOfPress: number;// sum of pressure
+    numOfPress: number; //number of pressure
+    pressAvrg: number;// sum/num ofPress
+
+    sumOfPassTime: number;
+    numOfPassTime: number;
+    passTimeAvrg: number;    
+
     data: any;
     device: any;
     ddd: number;
@@ -84,16 +92,25 @@ import { PatientService } from '../../providers/patient-service';
       this.d = "0";
       this.device = this.navParams.get('device');
 
+      this.sumOfPress = 0;
+      this.numOfPress = 0;
+      this.pressAvrg = 0;
+
+      this.sumOfPassTime = 0;
+      this.numOfPassTime = 0;
+      this.passTimeAvrg = 0;
       
       // Treatment info
       this.treatInfo = {
-        WeekNO: 0,
-        Threshold1: 0,
+        Week_NO: 0,
         NoDayinWeek: 0,
         NoSetinDay: 0,
-        NoTimeinSet: 0,  
+        NoTimeinSet: 0,
+        Day_NO: 0,
+        Set_NO: 0,
+        Time_NO: 0,
       }
-      this.getTreatInfo();
+      this.getCurrentData();
 
       this.wi = 0 + "%";
       this.ff();  
@@ -120,6 +137,7 @@ import { PatientService } from '../../providers/patient-service';
         buffer =>{
           let dd = new Uint8Array(buffer);
           this.d = "" + dd[1];
+          this.calPressAvrg(dd[1]);
           this.updateChart(dd[1]);
           this.checkForCountDown(dd[1]);
         },
@@ -176,7 +194,7 @@ import { PatientService } from '../../providers/patient-service';
             console.log("isCountDown!");
           }
         }else{
-          this.wi = "0%";
+          this.wi = 0 + "%";
           this.isCountDown = false;
           console.log("is not CountDown");
           clearInterval(this.interval);
@@ -184,17 +202,26 @@ import { PatientService } from '../../providers/patient-service';
       }
 
       countDown(sec){
+        this.numOfPassTime++;
         let milli = 0;
         let percent = 0;
         this.interval = setInterval(()=>{
           milli += 25;
-          percent = (milli / (sec * 1000)) * 100; 
-          console.log("percent " + percent);
+          if(milli%1000 == 0){
+            console.log("min!");
+            this.calPassTimeAvrg();
+          }
           this.wi = percent + "%";
           if(milli == (sec * 1000)){
+            percent = 100;
             console.log("success");
             this.treatInfo.NoTimeinSet++;
-            clearInterval(this.interval);
+            // clearInterval(this.interval);
+          }else if(milli < (sec * 1000)){
+            percent = (milli / (sec * 1000)) * 100;             
+            console.log("percent " + percent);
+          }else{
+            percent = 100;
           }
         }, 25);
       }
@@ -218,8 +245,9 @@ import { PatientService } from '../../providers/patient-service';
         getCurrentData(){
           this.patientService.getCurrent().subscribe(
             data=>{
-              let current = data.current;
-              console.log("current", current);
+              this.treatInfo = data.current;
+
+              // console.log("current", current);
             }
             )
         }
@@ -230,5 +258,18 @@ import { PatientService } from '../../providers/patient-service';
               console.log("theshold", th);
             }
             )
+        }
+
+        calPressAvrg(pressure){
+          if(pressure > 0){
+            this.sumOfPress += pressure;
+            this.numOfPress++;
+            this.pressAvrg = Math.floor(this.sumOfPress / this.numOfPress); 
+          }
+        }
+
+        calPassTimeAvrg(){
+          this.sumOfPassTime++;
+          this.passTimeAvrg = Math.floor(this.sumOfPassTime / this.numOfPassTime);
         }
       }

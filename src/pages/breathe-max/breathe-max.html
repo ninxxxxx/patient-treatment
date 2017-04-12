@@ -14,31 +14,36 @@
 
 
 <ion-content padding style="flex: 1">
-{{currentData}}
-<button ion-button (click)="getThesholdData()">get Theshold</button>
-<button ion-button (click)="getCurrentData()">get Current</button>
+	{{currentData}}
+<!-- <button ion-button (click)="getThesholdData()">get Theshold</button>
+	<button ion-button (click)="getCurrentData()">get Current</button> -->
 	<h1 hidden="true">{{fff}}</h1>
 	<ion-grid>
 		<ion-row>
 			<ion-col>
 				<div class="user-info">
-					<b>User Information</b><br>
-					<b>ID:58333333</b>
+					<!-- <b>User Information</b><br>
+					<b>ID:58333333</b> -->
 					<ion-grid >
 						<ion-row>
 							<ion-col>
-								<p>week {{" " + treatInfo.WeekNO}}</p>
+								<p>week {{" " + treatInfo.Week_NO}}</p>
 							</ion-col>
 							<ion-col style="text-align: right;">
-								<p>{{"2/4"}} sets</p>
+								<p>{{ treatInfo.Time_NO + "/" + treatInfo.NoTimeinSet + " "}} sets</p>
 							</ion-col>
 						</ion-row>
 						<ion-row>
 							<ion-col>
-								<p>{{"1/3"}} days</p>			
+								<p>{{treatInfo.Day_NO + "/" + treatInfo.NoDayinWeek + " "}} days</p>			
 							</ion-col>
 							<ion-col center style="text-align: right;">
-								<h3>{{treatInfo.NoTimeinSet + "/" + treatInfo.NoSetinDay + " "}}times</h3>			
+								<h3>{{treatInfo.NoTimeinSet + "/" + treatInfo.NoSetinDay + " "}}times</h3>
+							</ion-col>
+						</ion-row>
+						<ion-row>
+							<ion-col center style="text-align: right;">
+								<p style="color: lightslategray">{{"Time Avrg. " + passTimeAvrg + " s " + " " + "Pressure Avrg. " + pressAvrg}}</p>
 							</ion-col>
 						</ion-row>
 					</ion-grid>
