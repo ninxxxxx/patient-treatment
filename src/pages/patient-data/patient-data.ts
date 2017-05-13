@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, ModalController } from 'ionic-angular';
 import { ViewController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
+import { HelpPage } from '../../pages/help/help';
+import { DeviceConnectionPage } from '../../pages/device-connection/device-connection'; 
 /*
   Generated class for the PatientData page.
 
@@ -15,15 +17,16 @@ import { Storage } from '@ionic/storage';
   })
   export class PatientDataPage {
 
-    week: string;
-    dateTime: string;
-    targetPress: string;
-    constTime: string;
-    dayInWeek: string;
-    setInDay: string;
-    timeInSet: string;
+    week: any = "";
+    dateTime: any = "";
+    targetPress: any = "";
+    constTime: any = "";
+    dayInWeek: any = "";
+    setInDay: any = "";
+    timeInSet: any = "";
 
     constructor(
+      public modalCtrl: ModalController,
       public navCtrl: NavController, 
       public navParams: NavParams, 
       public storage: Storage,
@@ -31,10 +34,28 @@ import { Storage } from '@ionic/storage';
       ) 
     {
       this.getValue();
+      this.isFirstHelp();
     }
 
     ionViewDidLoad() {
       console.log('ionViewDidLoad PatientDataPage');
+    }
+
+    isFirstHelp(){
+      this.storage.ready().then(()=>{
+        this.storage.get('ShowHelp').then(isFirst=>{
+          console.log(isFirst);
+          if(isFirst == null){
+            console.log("isFirst");
+            this.storage.set('ShowHelp', true)
+            .then(()=>{
+              console.log("show help is set")
+              let modal = this.modalCtrl.create(HelpPage);
+              modal.present();
+            });
+          }
+        })
+      })
     }
 
     getValue(){
@@ -80,12 +101,15 @@ import { Storage } from '@ionic/storage';
     }
 
     dismiss(){
-      this.viewCtrl.dismiss();
+      // this.viewCtrl.dismiss();
     }
     ok(){  
-      // this.dismiss();
-      this.setIDtoStorage();
-      this.viewCtrl.dismiss();
+      this.navCtrl.push(DeviceConnectionPage);
+    }
+
+    help(){
+      let modal = this.modalCtrl.create(HelpPage);
+      modal.present();
     }
 
     setIDtoStorage(){

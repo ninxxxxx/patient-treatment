@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
-import { ModalController, NavController, NavParams } from 'ionic-angular';
+import { ModalController, NavController, NavParams, ToastController } from 'ionic-angular';
 
 import { BLE } from '@ionic-native/ble';
 import { Storage } from '@ionic/storage';
-
 import { BaseChartDirective } from 'ng2-charts/ng2-charts';
-// import { Chart, ChartComponent } from 'ng2-chartjs2';
+
+import { PatientDataPage } from '../../pages/patient-data/patient-data'
 
 import { PatientService } from '../../providers/patient-service';
 
@@ -56,11 +56,14 @@ import { PatientService } from '../../providers/patient-service';
     //for countDown
     interval: any;
     isCountDown:  boolean;
+
+    isDone: boolean;
     //========================
     wi: string;
     wii :number;
     //3AF779 F7C33A FA7155
-
+    startDate;
+    endDate;
 
 
     public doughnutChartLabels:string[] = [];
@@ -76,6 +79,7 @@ import { PatientService } from '../../providers/patient-service';
     }
 
     constructor(
+      public toastCtrl: ToastController,
       private patientService: PatientService,
       private ble: BLE,
       public navCtrl: NavController, 
@@ -84,6 +88,7 @@ import { PatientService } from '../../providers/patient-service';
       public modalCtrl: ModalController
       ) 
     {
+      this.isDone = false;
       this.isStart = false;
       this.isConnect = false;
       this.ddd = 0;
@@ -102,7 +107,7 @@ import { PatientService } from '../../providers/patient-service';
       
       // Treatment info
       this.treatInfo = {
-        Week_NO: 0,
+        WeekNO: 0,
         NoDayinWeek: 0,
         NoSetinDay: 0,
         NoTimeinSet: 0,
@@ -110,7 +115,8 @@ import { PatientService } from '../../providers/patient-service';
         Set_NO: 0,
         Time_NO: 0,
       }
-      this.getCurrentData();
+      this.getTreatInfo();
+      // this.getCurrentData();
 
       this.wi = 0 + "%";
       this.ff();  
@@ -132,23 +138,36 @@ import { PatientService } from '../../providers/patient-service';
 
 
     start(){
-      this.isStart = true;
-      this.ble.startNotification(this.device.peripheralId, this.device.service, this.device.measurement).subscribe(
-        buffer =>{
-          let dd = new Uint8Array(buffer);
-          this.d = "" + dd[1];
-          this.calPressAvrg(dd[1]);
-          this.updateChart(dd[1]);
-          this.checkForCountDown(dd[1]);
-        },
-        err =>{
-          console.log("ERROR FROM STARTNOTIFICATION " + err);
-        }
-        );
+      this.startDate = new Date();
+      this.patientService.login("58333333").subscribe(
+        data=>{
+          let th = data.configurations.configuration;
+          this.treatInfo.NoDayinWeek = th.NoDayinWeek;
+          this.treatInfo.NoSetinDay = th.NoSetinDay;
+          this.treatInfo.NoTimeinSet = th.NoTimeinSet;
+          console.log("theshold", th);
+          this.isStart = true;
+          this.ble.startNotification(this.device.peripheralId, this.device.service, this.device.measurement).subscribe(
+            buffer =>{
+              let dd = new Uint8Array(buffer);
+              this.d = "" + dd[1];
+              this.calPressAvrg(dd[1]);
+              this.updateChart(dd[1]);
+              this.checkForCountDown(dd[1]);
+            },
+            err =>{
+              console.log("ERROR FROM STARTNOTIFICATION " + err);
+            }
+            );
+        })
     }
 
     stop(){
-      this.ble.stopNotification(this.device.peripheralId, this.device.service, this.device.measurement)
+      this.ble.stopNotification(
+        this.device.peripheralId, 
+        this.device.service, 
+        this.device.measurement
+        )
       .then(
         data=>{
           this.d = "0";
@@ -189,7 +208,7 @@ import { PatientService } from '../../providers/patient-service';
       checkForCountDown(value){
         if(value >= 80){
           if(!this.isCountDown){
-            this.countDown(5);
+            this.countDown(3);
             this.isCountDown = true;
             console.log("isCountDown!");
           }
@@ -205,6 +224,7 @@ import { PatientService } from '../../providers/patient-service';
         this.numOfPassTime++;
         let milli = 0;
         let percent = 0;
+
         this.interval = setInterval(()=>{
           milli += 25;
           if(milli%1000 == 0){
@@ -212,17 +232,19 @@ import { PatientService } from '../../providers/patient-service';
             this.calPassTimeAvrg();
           }
           this.wi = percent + "%";
+
           if(milli == (sec * 1000)){
             percent = 100;
             console.log("success");
-            this.treatInfo.NoTimeinSet++;
+            this.countScore();
             // clearInterval(this.interval);
           }else if(milli < (sec * 1000)){
             percent = (milli / (sec * 1000)) * 100;             
-            console.log("percent " + percent);
+            // console.log("percent " + percent);
           }else{
             percent = 100;
           }
+
         }, 25);
       }
       getTreatInfo(){
@@ -252,9 +274,12 @@ import { PatientService } from '../../providers/patient-service';
             )
         }
         getThesholdData(){
-          this.patientService.login().subscribe(
+          this.patientService.login("58333333").subscribe(
             data=>{
               let th = data.configurations.configuration;
+              this.treatInfo.NoDayinWeek = th.NoDayinWeek;
+              this.treatInfo.NoSetinDay = th.NoSetinDay;
+              this.treatInfo.NoTimeinSet = th.NoTimeinSet;
               console.log("theshold", th);
             }
             )
@@ -271,5 +296,43 @@ import { PatientService } from '../../providers/patient-service';
         calPassTimeAvrg(){
           this.sumOfPassTime++;
           this.passTimeAvrg = Math.floor(this.sumOfPassTime / this.numOfPassTime);
+        }
+
+        countScore(){
+          this.treatInfo.Time_NO++;
+          if (this.treatInfo.Time_NO == this.treatInfo.NoTimeinSet){
+            this.isDone = true;
+            this.endDate = new Date();
+          }
+          // this.endDate = new Date();
+        }
+
+        done(){
+          this.storage.get('PatientID').then(userId=>{
+
+            this.treatInfo["pressAvrg"] = this.pressAvrg;
+            this.treatInfo["passTimeAvrg"] = this.passTimeAvrg;
+            this.treatInfo["sumOfPassTime"] = this.sumOfPassTime;
+
+            this.patientService.sendResult(userId, this.treatInfo, this.startDate.getTime(), this.endDate.getTime()).subscribe(
+              data=>{
+                console.log(data);
+                this.toast("Good Job!, You Did it", 3);
+                this.navCtrl.popToRoot().then(()=>console.log("go to root"));
+              },
+              err=>{
+                console.log(err);
+              }
+              )
+          })
+
+        }
+
+        toast(msg, sec){
+          let toast = this.toastCtrl.create({
+            message: msg,
+            duration: (sec * 1000),
+            position: "bottom"});
+          toast.present();            
         }
       }

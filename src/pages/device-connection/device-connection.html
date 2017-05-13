@@ -4,6 +4,8 @@
 	</ion-navbar>
 </ion-header>
 <ion-content>
+	<!-- <button ion-button (click)="testTheshold()">testhold</button>
+	<button ion-button (click)="testCurrent()">current</button> -->
 	<ion-grid>
 		<ion-row>
 			<ion-col style="text-align: center;">
@@ -11,7 +13,7 @@
 				<p>{{status}}</p>
 				<button ion-button round outline [hidden]="isConnect"(click)="scan()">connect</button>
 				<button ion-button round [hidden]="!isConnect" (click)="next()">next</button><br>
-				<button ion-button round outline [hidden]="!isConnect" (click)="disconnect()">Disconnect</button>
+				<!-- <button ion-button round outline [hidden]="!isConnect" (click)="disconnect()">Disconnect</button> -->
 			</ion-col>
 		</ion-row>
 	</ion-grid>

@@ -25,12 +25,13 @@ import 'rxjs/add/operator/map';
       return json;      
     }
     
-    login(){
-      let url = "http://www.nbtcrehab.eng.psu.ac.th:8080/ConfigurationServer/webresources/getthreshold?Patient_ID=58333333&Device_ID=7";
+    login(username){
+      let url = "http://www.nbtcrehab.eng.psu.ac.th:8080/ConfigurationServer/webresources/getthreshold?Patient_ID=" + username + "&Device_ID=7";
       let header = new Headers({'Content-Type': 'text/plain'});
       let options = new RequestOptions({headers: header})
       let response = this.http.get(url, options)
       .map(res => this.parseXtoJ(res));
+      // return XML json 
       return response;
 
     }
@@ -45,5 +46,29 @@ import 'rxjs/add/operator/map';
 
     }
 
-    
+    sendResult(userId, data, startTime, EndTime){
+      console.log(userId);
+      console.log(data);
+      console.log(startTime);
+      console.log(EndTime);
+      // let list = ["C0001PID","C0001S_DT","C0001E_DT","C0001WNO","C0001DNO","C0001SNO","C0001TNO","C0001DID","C0001MV1","C0001MV2","C0001MV3","C0001MV4","C0001MV5"]
+      let url = 
+      "http://nbtcrehab.eng.psu.ac.th:8080/httpds?_device=C0001"+
+      "&C0001PID=" + userId +
+      "&C0001S_DT=" + startTime +
+      "&C0001E_DT=" + EndTime +
+      "&C0001WNO=" + data.WeekNO +
+      "&C0001DNO=" + data.Day_NO +
+      "&C0001SNO=" + data.Set_NO +
+      "&C0001TNO=" + data.Time_NO +
+      "&C0001DID=" + 7 +
+      "&C0001MV1=" + data.passTimeAvrg +
+      "&C0001MV2=" + data.pressAvrg +
+      "&C0001MV3=" + data.sumOfPassTime ;
+
+      let response = this.http.get(url)
+      .map(res => this.parseXtoJ(res));
+      return response;
+    }    
   }
+///http://nbtcrehab.eng.psu.ac.th:8080/httpds?_device=C0001&C0001PID= userId&C0001S_DT= startTime&C0001E_DT= EndTime&C0001WNO= data.WeekNO&C0001DNO= data.Day_NO&C0001SNO= data.Set_NO&C0001TNO= data.Time_NO&C0001DID= 7&C0001MV1= data.passTimeAvrg&C0001MV2= data.pressAvrg&C0001MV3= data.sumOfPassTime

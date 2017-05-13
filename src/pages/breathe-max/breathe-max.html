@@ -14,7 +14,7 @@
 
 
 <ion-content padding style="flex: 1">
-	{{currentData}}
+	<!-- {{currentData}} -->
 <!-- <button ion-button (click)="getThesholdData()">get Theshold</button>
 	<button ion-button (click)="getCurrentData()">get Current</button> -->
 	<h1 hidden="true">{{fff}}</h1>
@@ -30,7 +30,7 @@
 								<p>week {{" " + treatInfo.Week_NO}}</p>
 							</ion-col>
 							<ion-col style="text-align: right;">
-								<p>{{ treatInfo.Time_NO + "/" + treatInfo.NoTimeinSet + " "}} sets</p>
+								<p>{{ treatInfo.Set_NO + "/" + treatInfo.NoSetinDay + " "}} sets</p>
 							</ion-col>
 						</ion-row>
 						<ion-row>
@@ -38,7 +38,7 @@
 								<p>{{treatInfo.Day_NO + "/" + treatInfo.NoDayinWeek + " "}} days</p>			
 							</ion-col>
 							<ion-col center style="text-align: right;">
-								<h3>{{treatInfo.NoTimeinSet + "/" + treatInfo.NoSetinDay + " "}}times</h3>
+								<h3>{{treatInfo.Time_NO + "/" + treatInfo.NoTimeinSet + " "}}times</h3>
 							</ion-col>
 						</ion-row>
 						<ion-row>
@@ -78,10 +78,14 @@
 			</ion-col>
 		</ion-row>
 		<ion-row style="text-align: center;">
-			<ion-col style="text-align: center; padding-top: 0px; padding-bottom: 0px;">
+			<ion-col >
 				<button [hidden]="isStart" ion-button full (click)="start()">start</button>
-				<button [hidden]="!isStart" ion-button full (click)="stop()">stop</button>			
+				<button [hidden]="!isStart" ion-button full (click)="stop()">stop</button>
+			</ion-col>
+			<ion-col>
+				<button ion-button full [disabled]="!isDone" (click)="done()">Done</button>
 			</ion-col>
 		</ion-row>
 	</ion-grid>
 </ion-content>
+<!-- style="text-align: center; padding-top: 0px; padding-bottom: 0px;" -->

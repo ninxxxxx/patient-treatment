@@ -5,6 +5,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { BrowserModule } from '@angular/platform-browser';
 import { ChartsModule } from 'ng2-charts';
 import { BLE } from '@ionic-native/ble';
+import { TextToSpeech } from '@ionic-native/text-to-speech';
 
 import '../../node_modules/chart.js/src/chart.js';
 

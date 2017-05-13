@@ -9,6 +9,8 @@ import { BreatheMaxPage } from '../../pages/breathe-max/breathe-max';
 import { PatientService } from '../../providers/patient-service';
 import { HelpPage } from '../help/help';
 import { PatientDataPage } from '../../pages/patient-data/patient-data';
+
+
 // import { DoughnutChartComponent } from '../../components/doughnut-chart/doughnut-chart';
 /*
 Generated class for the DeviceConnection page.
@@ -36,7 +38,6 @@ export class DeviceConnectionPage {
   datas: any;
 
   chartType:string;
-
   constructor(
     private ble: BLE,
     public storage: Storage, 
@@ -47,9 +48,7 @@ export class DeviceConnectionPage {
     public modalCtrl: ModalController
     ) 
   {
-
     this.datas = [];
-    // this.data = new Promise<string>
     this.status = "connect your device...";
     this.defaultDevice = {
       service: '180D',
@@ -59,18 +58,6 @@ export class DeviceConnectionPage {
     this.isConnect = false;
     this.userInfo = {deviceId:7};
     this.devices = [{name: "ATMEL-HRP", id:"F8:F0:05:F5:1B:DA", deviceId:7}]; 
-
-    this.storage.ready().then(() => {
-      this.storage.get('ShowHelp').then((show) => {
-
-        if(show == null){
-          let modal = this.modalCtrl.create(HelpPage);
-          modal.present();
-        }
-      })
-    });
-
-    this.openPatientDataModal();
 
   }
 
@@ -112,7 +99,6 @@ export class DeviceConnectionPage {
               this.isConnect = true;
               this.status = "Connected";
               this.defaultDevice.peripheralId = peripheral.id;
-
             })
             .catch(err =>{
               this.isConnect = false
@@ -154,4 +140,20 @@ export class DeviceConnectionPage {
     let modal = this.modalCtrl.create(PatientDataPage);
     modal.present();
   }
+
+  testTheshold(){
+    this.patientService.login("58333333").subscribe(
+      data=>{console.log("data", data)},
+      error=>{console.log("error", error)}
+      );
+  }
+  testCurrent(){
+    this.patientService.login("58333333").subscribe(
+      data=>{console.log("data", data)},
+      error=>{console.log("error", error)}
+      );
+  }
+
+
+
 }
