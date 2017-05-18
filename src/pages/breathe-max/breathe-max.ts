@@ -29,6 +29,8 @@ import { PatientService } from '../../providers/patient-service';
     numOfPress: number; //number of pressure
     pressAvrg: number;// sum/num ofPress
 
+    isPass: boolean;
+    numOfHalfPass: number;
     sumOfPassTime: number;
     numOfPassTime: number;
     passTimeAvrg: number;    
@@ -65,6 +67,8 @@ import { PatientService } from '../../providers/patient-service';
     startDate;
     endDate;
 
+    timeTarget;
+    userId:string = "";
 
     public doughnutChartLabels:string[] = [];
     public doughnutChartData:number[] = [0, 0, 0, 255];
@@ -88,6 +92,7 @@ import { PatientService } from '../../providers/patient-service';
       public modalCtrl: ModalController
       ) 
     {
+      this.isPass = false;
       this.isDone = false;
       this.isStart = false;
       this.isConnect = false;
@@ -101,19 +106,22 @@ import { PatientService } from '../../providers/patient-service';
       this.numOfPress = 0;
       this.pressAvrg = 0;
 
+      this.numOfHalfPass = 0;
       this.sumOfPassTime = 0;
       this.numOfPassTime = 0;
       this.passTimeAvrg = 0;
       
       // Treatment info
       this.treatInfo = {
-        WeekNO: 0,
-        NoDayinWeek: 0,
-        NoSetinDay: 0,
-        NoTimeinSet: 0,
-        Day_NO: 0,
-        Set_NO: 0,
-        Time_NO: 0,
+        patient_id: 0, 
+        device_id: 0, 
+        week_no: 0, 
+        day_no: 0, 
+        set_no: 0, 
+        time_no: 0, 
+        noDayinWeek: 0, 
+        noSetinDay: 0, 
+        noTimeinSet: 0, 
       }
       this.getTreatInfo();
       // this.getCurrentData();
@@ -127,6 +135,29 @@ import { PatientService } from '../../providers/patient-service';
       console.log('ionViewDidLoad BreatheMaxPage');
     }    
 
+
+    ionViewWillEnter(){
+      console.log("ionViewWillEnter")
+    }
+    ionViewDidEnter(){
+      console.log("ionViewDidEnter")
+    }
+    ionViewWillLeave(){
+      console.log("ionViewWillLeave")
+    }
+    ionViewDidLeave(){
+      console.log("ionViewDidLeave")
+    }
+    ionViewWillUnload(){
+      console.log("ionViewWillUnload")
+    }
+    ionViewCanEnter(){
+      console.log("ionViewCanEnter")
+    }
+    ionViewCanLeave(){
+      console.log("ionViewCanLeave")
+    }
+
     ff(){
       let i = setInterval(()=>{
         this.fff++;
@@ -135,31 +166,64 @@ import { PatientService } from '../../providers/patient-service';
       }, 10);
     }
 
-
+    getTreatInfo(){
+      this.storage.ready().then(()=>{
+        this.storage.get('PatientID').then(id=>{
+          this.userId = id;
+          this.getCurrentData(this.userId); 
+          this.getThesholdData(this.userId); 
+        }).catch(err=>console.log("Error: " + err));
+      })
+    }
+    getCurrentData(userId){
+      this.patientService.getCurrent(userId).subscribe(
+        data=>{
+          data = data.current;
+          if(data){
+            this.treatInfo.day_no = data.Day_NO;
+            this.treatInfo.set_no = data.Set_NO;
+            this.treatInfo.time_no = data.Time_NO;
+          }
+        },
+        err=>{
+          console.log(err);
+        })
+    }
+    getThesholdData(userId){
+      this.patientService.login(userId).subscribe(
+        data=>{
+          let th = data.configurations.configuration;
+          console.log("theshold", th);
+          this.treatInfo.patient_id = th.Patient_ID;
+          this.treatInfo.device_id = th.Device_ID;
+          this.treatInfo.week_no = th.Week_NO;
+          this.treatInfo.noDayinWeek = th.NoDayinWeek;
+          this.treatInfo.noSetinDay = th.NoSetinDay;
+          this.treatInfo.noTimeinSet = th.NoTimeinSet;
+          this.timeTarget = th.Threshold_2;
+        }
+        )
+    }
 
     start(){
       this.startDate = new Date();
-      this.patientService.login("58333333").subscribe(
-        data=>{
-          let th = data.configurations.configuration;
-          this.treatInfo.NoDayinWeek = th.NoDayinWeek;
-          this.treatInfo.NoSetinDay = th.NoSetinDay;
-          this.treatInfo.NoTimeinSet = th.NoTimeinSet;
-          console.log("theshold", th);
-          this.isStart = true;
-          this.ble.startNotification(this.device.peripheralId, this.device.service, this.device.measurement).subscribe(
-            buffer =>{
-              let dd = new Uint8Array(buffer);
-              this.d = "" + dd[1];
-              this.calPressAvrg(dd[1]);
-              this.updateChart(dd[1]);
-              this.checkForCountDown(dd[1]);
-            },
-            err =>{
-              console.log("ERROR FROM STARTNOTIFICATION " + err);
-            }
-            );
-        })
+      this.isStart = true;
+      this.ble.startNotification(
+        this.device.peripheralId, 
+        this.device.service, 
+        this.device.measurement)
+      .subscribe(
+        buffer =>{
+          let dd = new Uint8Array(buffer);
+          this.d = "" + dd[1];
+          this.calPressAvrg(dd[1]);
+          this.updateChart(dd[1]);
+          this.checkForCountDown(dd[1]);
+        },
+        err =>{
+          console.log("ERROR FROM STARTNOTIFICATION " + err);
+        }
+        );
     }
 
     stop(){
@@ -182,7 +246,6 @@ import { PatientService } from '../../providers/patient-service';
       }
 
       updateChart(value){
-
         if(value <= 59){
           this.doughnutChartData[0] = value;
           this.doughnutChartData[1] = 0;
@@ -198,7 +261,6 @@ import { PatientService } from '../../providers/patient-service';
         }
         this.doughnutChartData[3] = 255 - value; 
         this.chart.chart.update();
-
       }
 
       changeWidth(value){
@@ -208,7 +270,7 @@ import { PatientService } from '../../providers/patient-service';
       checkForCountDown(value){
         if(value >= 80){
           if(!this.isCountDown){
-            this.countDown(3);
+            this.countDown(parseInt(this.timeTarget));
             this.isCountDown = true;
             console.log("isCountDown!");
           }
@@ -221,118 +283,99 @@ import { PatientService } from '../../providers/patient-service';
       }
 
       countDown(sec){
-        this.numOfPassTime++;
         let milli = 0;
         let percent = 0;
-
+        // let percent = (milli / (sec * 1000)) * 100;
+        // this.wi = percent + "%";
         this.interval = setInterval(()=>{
-          milli += 25;
-          if(milli%1000 == 0){
-            console.log("min!");
-            this.calPassTimeAvrg();
+          milli += 1000;
+          if((milli / 1000) == Math.round((sec) / 2)){
+            console.log("pass half");
+            this.numOfHalfPass++;
           }
-          this.wi = percent + "%";
-
+          if(this.numOfPassTime == this.treatInfo.noTimeinSet && this.numOfHalfPass <= (this.treatInfo.noTimeinSet*2)){
+            this.isPass = true;
+            console.log("ค่าเท่าแล้ว ทั้งที่จำนวนยังไม่ครบ");
+          }
+          if(this.numOfPassTime < this.treatInfo.noTimeinSet && this.numOfHalfPass >= (this.treatInfo.noTimeinSet*2)){
+            this.isPass = false;
+            console.log("ค่าน้อยกว่า แต่จำนวนครบแล้ว");
+          }
           if(milli == (sec * 1000)){
+            this.numOfPassTime++;
             percent = 100;
             console.log("success");
+            this.calPassTimeAvrg(sec);
             this.countScore();
-            // clearInterval(this.interval);
           }else if(milli < (sec * 1000)){
             percent = (milli / (sec * 1000)) * 100;             
-            // console.log("percent " + percent);
           }else{
             percent = 100;
+            this.calPassTimeAvrg(1);
           }
-
-        }, 25);
+          this.wi = percent + "%";
+        }, 1000);
       }
-      getTreatInfo(){
-        Promise.all([
-          this.storage.get('WeekNO'),
-          this.storage.get('Threshold1'),
-          this.storage.get('NoDayinWeek'),
-          this.storage.get('NoSetinDay'),
-          this.storage.get('NoTimeinSet'),
-          ]).then(values =>{
-            this.treatInfo.WeekNO = values[0]
-            this.treatInfo.Threshold1 = values[1]
-            this.treatInfo.NoDayinWeek = values[2]
-            this.treatInfo.NoSetinDay = values[3]
-            this.treatInfo.NoTimeinSet = values[4]
-            console.log(values);
-          })
+
+      countScore(){
+        this.treatInfo.time_no++;
+        if (this.treatInfo.time_no == this.treatInfo.noTimeinSet){
+          this.treatInfo.time_no = 0;
+          this.treatInfo.set_no++;
+          this.isDone = true;
+          this.endDate = new Date();
         }
-
-        getCurrentData(){
-          this.patientService.getCurrent().subscribe(
-            data=>{
-              this.treatInfo = data.current;
-
-              // console.log("current", current);
-            }
-            )
+        if (this.treatInfo.set_no == this.treatInfo.noSetinDay){
+          this.treatInfo.set_no = 0;
+          this.treatInfo.day_no++;
         }
-        getThesholdData(){
-          this.patientService.login("58333333").subscribe(
-            data=>{
-              let th = data.configurations.configuration;
-              this.treatInfo.NoDayinWeek = th.NoDayinWeek;
-              this.treatInfo.NoSetinDay = th.NoSetinDay;
-              this.treatInfo.NoTimeinSet = th.NoTimeinSet;
-              console.log("theshold", th);
-            }
-            )
-        }
-
-        calPressAvrg(pressure){
-          if(pressure > 0){
-            this.sumOfPress += pressure;
-            this.numOfPress++;
-            this.pressAvrg = Math.floor(this.sumOfPress / this.numOfPress); 
-          }
-        }
-
-        calPassTimeAvrg(){
-          this.sumOfPassTime++;
-          this.passTimeAvrg = Math.floor(this.sumOfPassTime / this.numOfPassTime);
-        }
-
-        countScore(){
-          this.treatInfo.Time_NO++;
-          if (this.treatInfo.Time_NO == this.treatInfo.NoTimeinSet){
-            this.isDone = true;
-            this.endDate = new Date();
-          }
-          // this.endDate = new Date();
-        }
-
-        done(){
-          this.storage.get('PatientID').then(userId=>{
-
-            this.treatInfo["pressAvrg"] = this.pressAvrg;
-            this.treatInfo["passTimeAvrg"] = this.passTimeAvrg;
-            this.treatInfo["sumOfPassTime"] = this.sumOfPassTime;
-
-            this.patientService.sendResult(userId, this.treatInfo, this.startDate.getTime(), this.endDate.getTime()).subscribe(
-              data=>{
-                console.log(data);
-                this.toast("Good Job!, You Did it", 3);
-                this.navCtrl.popToRoot().then(()=>console.log("go to root"));
-              },
-              err=>{
-                console.log(err);
-              }
-              )
-          })
-
-        }
-
-        toast(msg, sec){
-          let toast = this.toastCtrl.create({
-            message: msg,
-            duration: (sec * 1000),
-            position: "bottom"});
-          toast.present();            
+        if (this.treatInfo.day_no == this.treatInfo.noDayinWeek){
+          this.treatInfo.day_no = 0;
         }
       }
+
+      calPressAvrg(pressure){
+        if(pressure > 0){
+          this.sumOfPress += pressure;
+          this.numOfPress++;
+          this.pressAvrg = Math.floor(this.sumOfPress / this.numOfPress); 
+        }
+      }
+
+      calPassTimeAvrg(sec){
+        this.sumOfPassTime += sec;
+        this.passTimeAvrg = Math.floor(this.sumOfPassTime / this.numOfPassTime);
+      }
+
+      done(){
+        this.storage.get('PatientID').then(userId=>{
+          this.treatInfo["pressAvrg"] = this.pressAvrg;
+          this.treatInfo["passTimeAvrg"] = this.passTimeAvrg;
+          this.treatInfo["sumOfPassTime"] = this.sumOfPassTime;
+          this.treatInfo["isPass"] = this.isPass;
+          this.patientService.sendResult(
+            userId, 
+            this.treatInfo, 
+            this.startDate.getTime(), 
+            this.endDate.getTime()
+            ).subscribe(
+            data=>{
+              console.log(data);
+              this.toast("Good Job!, You Did it", 3);
+              this.navCtrl.popToRoot().then(()=>console.log("go to root"));
+            },
+            err=>{
+              this.toast("Can't connect to server", 3);
+            }
+            )
+          })
+      }
+
+      toast(msg, sec){
+        let toast = this.toastCtrl.create({
+          message: msg,
+          duration: (sec * 1000),
+          position: "bottom"});
+        toast.present();            
+      }
+    }

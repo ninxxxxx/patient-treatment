@@ -14,6 +14,7 @@
 
 
 <ion-content padding style="flex: 1">
+	{{percent}}
 	<!-- {{currentData}} -->
 <!-- <button ion-button (click)="getThesholdData()">get Theshold</button>
 	<button ion-button (click)="getCurrentData()">get Current</button> -->
@@ -27,18 +28,18 @@
 					<ion-grid >
 						<ion-row>
 							<ion-col>
-								<p>week {{" " + treatInfo.Week_NO}}</p>
+								<p>week {{" " + treatInfo.week_no}}</p>
 							</ion-col>
 							<ion-col style="text-align: right;">
-								<p>{{ treatInfo.Set_NO + "/" + treatInfo.NoSetinDay + " "}} sets</p>
+								<p>{{ treatInfo.set_no + "/" + treatInfo.noSetinDay + " "}} sets</p>
 							</ion-col>
 						</ion-row>
 						<ion-row>
 							<ion-col>
-								<p>{{treatInfo.Day_NO + "/" + treatInfo.NoDayinWeek + " "}} days</p>			
+								<p>{{treatInfo.day_no + "/" + treatInfo.noDayinWeek + " "}} days</p>			
 							</ion-col>
 							<ion-col center style="text-align: right;">
-								<h3>{{treatInfo.Time_NO + "/" + treatInfo.NoTimeinSet + " "}}times</h3>
+								<h3>{{treatInfo.time_no + "/" + treatInfo.noTimeinSet + " "}}times</h3>
 							</ion-col>
 						</ion-row>
 						<ion-row>

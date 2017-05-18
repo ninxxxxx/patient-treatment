@@ -12,15 +12,14 @@
 	</ion-navbar>
 </ion-header>
 
-<ion-content >
+<ion-content (click)="getUserId()">
 	<ion-card>
 		<ion-grid style="text-align: center;">
 			<ion-row>
 				<ion-col>
 					<b>Due Date</b>
 					<h4>{{dateTime}}</h4>
-					<!-- <h4>03/04/59</h4> -->
-				</ion-col>
+	 			</ion-col>
 			</ion-row>
 			<ion-row>
 				<ion-col>
@@ -37,11 +36,11 @@
 			<ion-row>
 				<ion-col style="padding-top: 0px;">
 					<h4>Week: {{week}}</h4>
-					<h4>Day in Week: {{dayInWeek}}</h4>
+					<h4>Day in Week: {{day_no}}/{{dayInWeek}}</h4>
 				</ion-col>
 				<ion-col style="padding-top: 0px;">
-					<h4>Set in Day: {{setInDay}}</h4>
-					<h4>Time in Set: {{timeInSet}}</h4>
+					<h4>Set in Day: {{set_no}}/{{setInDay}}</h4>
+					<h4>Time in Set: {{time_no}}/{{timeInSet}}</h4>
 				</ion-col>
 			</ion-row>
 		</ion-grid>

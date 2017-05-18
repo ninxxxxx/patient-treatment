@@ -35,9 +35,19 @@ import 'rxjs/add/operator/map';
       return response;
 
     }
+    getTheshold(username){
+      let url = "http://www.nbtcrehab.eng.psu.ac.th:8080/ConfigurationServer/webresources/getthreshold?Patient_ID=" + username + "&Device_ID=7";
+      let header = new Headers({'Content-Type': 'text/plain'});
+      let options = new RequestOptions({headers: header})
+      let response = this.http.get(url, options)
+      .map(res => this.parseXtoJ(res));
+      // return XML json 
+      return response;
 
-    getCurrent(){
-      let url = "http://nbtcrehab.eng.psu.ac.th:8080/ConfigurationServer/webresources/getcurrent?Patient_ID=58333333&Device_ID=7";
+    }
+
+    getCurrent(username){
+      let url = "http://nbtcrehab.eng.psu.ac.th:8080/ConfigurationServer/webresources/getcurrent?Patient_ID=" + username + "&Device_ID=7";
       // let header = new Headers({'Content-Type': 'text/plain'});
       // let options = new RequestOptions({headers: header})
       let response = this.http.get(url)
@@ -57,18 +67,18 @@ import 'rxjs/add/operator/map';
       "&C0001PID=" + userId +
       "&C0001S_DT=" + startTime +
       "&C0001E_DT=" + EndTime +
-      "&C0001WNO=" + data.WeekNO +
-      "&C0001DNO=" + data.Day_NO +
-      "&C0001SNO=" + data.Set_NO +
-      "&C0001TNO=" + data.Time_NO +
+      "&C0001WNO=" + data.week_no +
+      "&C0001DNO=" + data.day_no +
+      "&C0001SNO=" + data.set_no +
+      "&C0001TNO=" + data.time_no +
       "&C0001DID=" + 7 +
       "&C0001MV1=" + data.passTimeAvrg +
       "&C0001MV2=" + data.pressAvrg +
-      "&C0001MV3=" + data.sumOfPassTime ;
+      "&C0001MV3=" + data.sumOfPassTime +
+      "&C0001MV4=" + (data.isPass ? 1 : 0) ;
 
       let response = this.http.get(url)
       .map(res => this.parseXtoJ(res));
       return response;
     }    
   }
-///http://nbtcrehab.eng.psu.ac.th:8080/httpds?_device=C0001&C0001PID= userId&C0001S_DT= startTime&C0001E_DT= EndTime&C0001WNO= data.WeekNO&C0001DNO= data.Day_NO&C0001SNO= data.Set_NO&C0001TNO= data.Time_NO&C0001DID= 7&C0001MV1= data.passTimeAvrg&C0001MV2= data.pressAvrg&C0001MV3= data.sumOfPassTime

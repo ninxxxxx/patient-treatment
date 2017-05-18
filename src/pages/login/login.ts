@@ -86,24 +86,6 @@ import { HelpPage } from '../../pages/help/help';
       this.storage.ready().then(() => {
         // set a key/value
         this.storage.set('PatientID', this.userData.PatientID);
-        this.storage.set('ThresholdID', this.userData.ThresholdID);
-        this.storage.set('StaffID', this.userData.StaffID);
-        this.storage.set('DeviceID', this.userData.DeviceID);
-        this.storage.set('WeekNO', this.userData.WeekNO);
-        this.storage.set('ThresholdDateTime', this.userData.ThresholdDateTime);
-        this.storage.set('Threshold1', this.userData.Threshold1);
-        this.storage.set('Threshold2', this.userData.Threshold2);
-        this.storage.set('Threshold3', this.userData.Threshold3);
-        this.storage.set('Threshold4', this.userData.Threshold4);
-        this.storage.set('Threshold5', this.userData.Threshold5);
-        this.storage.set('Threshold6', this.userData.Threshold6);
-        this.storage.set('Threshold7', this.userData.Threshold7);
-        this.storage.set('Threshold8', this.userData.Threshold8);
-        this.storage.set('Threshold9', this.userData.Threshold9);
-        this.storage.set('Threshold10', this.userData.Threshold10);
-        this.storage.set('NoDayinWeek', this.userData.NoDayinWeek);
-        this.storage.set('NoSetinDay', this.userData.NoSetinDay);
-        this.storage.set('NoTimeinSet', this.userData.NoTimeinSet);
       });
     }
 
@@ -135,31 +117,18 @@ import { HelpPage } from '../../pages/help/help';
             //Don't foget make toast for server or network error
             // console.log(this.getPatientID);
             //Order is Important
-            this.userData.PatientID = data.Patient_ID;
-            this.userData.ThresholdID = data.Threshold_ID;
-            this.userData.StaffID = data.Staff_ID;
-            this.userData.DeviceID = data.Device_ID;
-            this.userData.WeekNO = data.Week_NO;
-            this.userData.ThresholdDateTime = data.Threshold_DateTime;
-            this.userData.Threshold1 = data.Threshold_1;
-            this.userData.Threshold2 = data.Threshold_2;
-            this.userData.Threshold3 = data.Threshold_3;
-            this.userData.Threshold4 = data.Threshold_4;
-            this.userData.Threshold5 = data.Threshold_5;
-            this.userData.Threshold6 = data.Threshold_6;
-            this.userData.Threshold7 = data.Threshold_7;
-            this.userData.Threshold8 = data.Threshold_8;
-            this.userData.Threshold9 = data.Threshold_9;
-            this.userData.Threshold10 = data.Threshold_10;
-            this.userData.NoDayinWeek = data.NoDayinWeek;
-            this.userData.NoSetinDay = data.NoSetinDay;
-            this.userData.NoTimeinSet = data.NoTimeinSet;
-            this.setIDtoStorage();
+            if(data.Patient_ID)
+            {
+              this.userData.PatientID = data.Patient_ID;
+              this.setIDtoStorage();
+            }else{
+              this.toast("username or password is incorrect", 3);
+            }
 
             this.navCtrl.push(PatientDataPage);
           }else{
             let toast = this.toastCtrl.create({
-              message: this.username + " is not registered yet.",
+              message: "username or password is incorrect",
               duration: 2000,
               position: "bottom"});
             toast.present();
@@ -189,5 +158,12 @@ import { HelpPage } from '../../pages/help/help';
       .catch(err=>{
         console.log(err);
       })
+    }
+    toast(msg, sec){
+      let toast = this.toastCtrl.create({
+        message: msg,
+        duration: (sec * 1000),
+        position: "bottom"});
+      toast.present();            
     }
   }

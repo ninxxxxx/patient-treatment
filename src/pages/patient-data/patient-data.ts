@@ -3,6 +3,8 @@ import { NavController, NavParams, ModalController } from 'ionic-angular';
 import { ViewController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
+
+import { PatientService } from '../../providers/patient-service';
 import { HelpPage } from '../../pages/help/help';
 import { DeviceConnectionPage } from '../../pages/device-connection/device-connection'; 
 /*
@@ -13,9 +15,12 @@ import { DeviceConnectionPage } from '../../pages/device-connection/device-conne
   */
   @Component({
     selector: 'page-patient-data',
-    templateUrl: 'patient-data.html'
+    templateUrl: 'patient-data.html',
+    providers: [PatientService]
   })
   export class PatientDataPage {
+
+    userId: string;
 
     week: any = "";
     dateTime: any = "";
@@ -25,7 +30,21 @@ import { DeviceConnectionPage } from '../../pages/device-connection/device-conne
     setInDay: any = "";
     timeInSet: any = "";
 
+    //currentData
+    patient_id: any = ""; 
+    device_id: any = ""; 
+    week_no: any = ""; 
+    day_no: any = 0; 
+    set_no: any = 0; 
+    time_no: any = 0; 
+    end_dateTime: any = ""; 
+    noDayinWeek: any = ""; 
+    noSetinDay: any = ""; 
+    noTimeinSet: any = ""; 
+
+
     constructor(
+      private patientService: PatientService,
       public modalCtrl: ModalController,
       public navCtrl: NavController, 
       public navParams: NavParams, 
@@ -33,8 +52,12 @@ import { DeviceConnectionPage } from '../../pages/device-connection/device-conne
       public viewCtrl: ViewController
       ) 
     {
-      this.getValue();
+      this.getUserId();
+      // this.getThesholdData(this.userId);
+      // this.getCurrentData(this.userId);
       this.isFirstHelp();
+
+
     }
 
     ionViewDidLoad() {
@@ -57,47 +80,52 @@ import { DeviceConnectionPage } from '../../pages/device-connection/device-conne
         })
       })
     }
-
-    getValue(){
-      this.storage.ready().then(() => {
-
-        // Or to get a key/value pair
-        this.storage.get('WeekNO').then((val) => {
-          console.log('WeekNO: ', val);
-          this.week = val;
+    getCurrentData(userId){
+      this.patientService.getCurrent(userId).subscribe(
+        data=>{
+          data = data.current;
+          if(data){
+            this.patient_id = data.Patient_ID;
+            this.device_id = data.Device_ID;
+            this.week_no = data.Week_NO;
+            this.day_no = data.Day_NO;
+            this.set_no = data.Set_NO;
+            this.time_no = data.Time_NO;
+            this.end_dateTime = data.End_DateTime;
+            this.noDayinWeek = data.NoDayinWeek;
+            this.noSetinDay = data.NoSetinDay;
+            this.noTimeinSet = data.NoTimeinSet;
+          }
+          // this.treatInfo = data.current;
+        },
+        err=>{
+          console.log(err);
         })
+    }
+    getThesholdData(userId){
+      this.patientService.getTheshold(userId).subscribe(
+        data=>{
+          let th = data.configurations.configuration;
+          this.week = th.Week_NO;
+          this.dateTime = th.Threshold_DateTime;
+          this.targetPress = th.Threshold_1;
+          this.constTime = th.Threshold_2;
+          this.dayInWeek = th.NoDayinWeek;
+          this.setInDay = th.NoSetinDay;
+          this.timeInSet = th.NoTimeinSet;
+        },
+        err=>console.log("Error: " + err)
+        )
+    }
 
-        this.storage.get('ThresholdDateTime').then((val) => {
-          console.log('ThresholdDateTime: ', val);
-          this.dateTime = val;
-        })
-
-        this.storage.get('Threshold1').then((val) => {
-          console.log('Threshold1: ', val);
-          let tmp: number = (parseInt(val)) * 10;
-          this.targetPress = tmp.toString();
-        })
-
-        this.storage.get('Threshold2').then((val) => {
-          console.log('Threshold2: ', val);
-          this.constTime = val;
-        })
-
-        this.storage.get('NoDayinWeek').then((val) => {
-          console.log('NoDayinWeek: ', val);
-          this.dayInWeek = val;
-        })
-
-        this.storage.get('NoSetinDay').then((val) => {
-          console.log('NoSetinDay: ', val);
-          this.setInDay = val;
-        })
-
-        this.storage.get('NoTimeinSet').then((val) => {
-          console.log('NoTimeinSet: ', val);
-          this.timeInSet = val;
-        })
-      });
+    getUserId(){
+      this.storage.ready().then(()=>{
+        this.storage.get('PatientID').then(id=>{
+          this.userId = id;
+          this.getThesholdData(this.userId);
+          this.getCurrentData(this.userId);
+        }).catch(err=>console.log("Error: " + err));
+      })
     }
 
     dismiss(){
@@ -105,6 +133,7 @@ import { DeviceConnectionPage } from '../../pages/device-connection/device-conne
     }
     ok(){  
       this.navCtrl.push(DeviceConnectionPage);
+
     }
 
     help(){
