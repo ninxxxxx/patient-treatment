@@ -285,8 +285,6 @@ import { PatientService } from '../../providers/patient-service';
       countDown(sec){
         let milli = 0;
         let percent = 0;
-        // let percent = (milli / (sec * 1000)) * 100;
-        // this.wi = percent + "%";
         this.interval = setInterval(()=>{
           milli += 1000;
           if((milli / 1000) == Math.round((sec) / 2)){
